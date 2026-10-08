@@ -1,7 +1,6 @@
-```markdown
 # Standard Operating Procedure (SOP): Full-Stack Laravel Lifecycle & Project Management Guide
 
-This document defines the complete end-to-end framework for developing, managing, and deploying Laravel applications. Designed for Full-Stack Engineers acting as Project Managers, it establishes a **Schema-First, Zero-Data-Loss** workflow across local environments, GitHub version control, and Hostinger production servers.
+This document defines the complete end-to-end framework for developing, managing, and deploying Laravel applications. Designed for Full-Stack Engineers acting as Project Managers, it establishes the process, governance, and deployment safeguards required to build and ship production-ready Laravel projects without compromising code quality, security, or client data.
 
 ---
 
@@ -25,7 +24,6 @@ Inside your target project folder on your local machine:
 ```bash
 # Install Laravel directly into current empty directory
 composer create-project laravel/laravel .
-
 ```
 
 ### Step 2: Configure Environment (`.env`)
@@ -37,7 +35,7 @@ APP_NAME="BiztacsApp"
 APP_ENV=local
 APP_KEY=
 APP_DEBUG=true
-APP_URL=[http://127.0.0.1:8000](http://127.0.0.1:8000)
+APP_URL=http://127.0.0.1:8000
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -45,14 +43,12 @@ DB_PORT=3306
 DB_DATABASE=biztacs_db
 DB_USERNAME=root
 DB_PASSWORD=
-
 ```
 
 Generate the secret encryption key:
 
 ```bash
 php artisan key:generate
-
 ```
 
 ### Step 3: Validate Security (`.gitignore`)
@@ -66,7 +62,6 @@ Ensure `.gitignore` is present in your root directory to prevent pushing credent
 .env
 .env.backup
 .env.production
-
 ```
 
 ---
@@ -75,12 +70,9 @@ Ensure `.gitignore` is present in your root directory to prevent pushing credent
 
 All features begin with database modeling. Never alter database tables manually inside phpMyAdmin; use Laravel Migrations to keep database changes tracked in code.
 
-```
-┌────────────────────────┐      ┌────────────────────────┐      ┌────────────────────────┐
-│  1. Create Migration   │ ───► │  2. Run Migration      │ ───► │  3. Build Application  │
-│  Define Schema in Code │      │  `php artisan migrate` │      │  Models, Controllers & │
-└────────────────────────┘      └────────────────────────┘      └────────────────────────┘
-
+```text
+1. Create Migration  --->  2. Run Migration  --->  3. Build Application
+Define Schema in Code      php artisan migrate      Models, Controllers & Routes
 ```
 
 ### Step 1: Generate Model and Migration Together
@@ -89,7 +81,6 @@ When building a new module (e.g., `Review`):
 
 ```bash
 php artisan make:model Review -m
-
 ```
 
 ### Step 2: Define Schema in Migration File
@@ -109,7 +100,6 @@ public function up(): void
         $table->timestamps();                            // created_at & updated_at
     });
 }
-
 ```
 
 ### Step 3: Execute Migration Locally
@@ -118,7 +108,6 @@ Run artisan migrate to build the table inside local phpMyAdmin:
 
 ```bash
 php artisan migrate
-
 ```
 
 ---
@@ -133,10 +122,8 @@ Follow a feature-branching strategy to protect the stability of the `main` branc
 git init
 git add .
 git commit -m "Build initial application foundation and core schemas"
-git branch -M main
-git remote add origin [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
+git branch -M maingit remote add origin https://github.com/your-username/your-repo-name.git
 git push -u origin main
-
 ```
 
 ### Step 2: Feature Branch Lifecycle
@@ -156,22 +143,18 @@ git commit -m "Implement Review model, controller, and database schema"
 
 # 4. Push feature branch to GitHub
 git push origin feature/client-reviews
-
 ```
 
 ### Step 3: Pull Request & Merge
 
-1. Open GitHub $\rightarrow$ Navigate to **Pull Requests**.
+1. Open GitHub → Navigate to **Pull Requests**.
 2. Create a PR from `feature/client-reviews` into `main`.
 3. Review code changes and click **Merge Pull Request**.
 4. Sync your local `main` branch:
+
 ```bash
-git checkout main
-git pull origin main
-
+git checkout maingit pull origin main
 ```
-
-
 
 ---
 
@@ -179,13 +162,10 @@ git pull origin main
 
 To deploy new features without deleting live customer data or causing downtime, follow these step-by-step procedures.
 
-```
-           LOCAL PC                         GITHUB                          HOSTINGER LIVE
-  ┌────────────────────────┐      ┌────────────────────────┐      ┌────────────────────────┐
-  │ Merge feature to main  │ ───► │ Push code to main      │ ───► │ Pull main & run        │
-  │ Test schema & views    │      │ Trigger auto/SSH pull  │      │ `migrate --force`      │
-  └────────────────────────┘      └────────────────────────┘      └────────────────────────┘
-
+```text
+LOCAL PC   --->   GITHUB   --->   HOSTINGER LIVE
+Merge feature to main   Push code to main   Pull main & run migrate --force
+Test schema & views     Trigger auto/SSH pull   Safe production updates
 ```
 
 ### Deployment Execution (Via SSH or Hostinger Terminal)
@@ -207,7 +187,6 @@ php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
-
 ```
 
 ### Critical Deployment Commandments
@@ -223,7 +202,7 @@ php artisan view:cache
 
 Use this operational checklist to manage every feature request from client request to final release sign-off.
 
-```
+```text
 [ ] 1. Requirement & Scope Definition
     ├── Document functional requirement & acceptance criteria.
     └── Determine required schema/table additions.
@@ -252,9 +231,4 @@ Use this operational checklist to manage every feature request from client reque
 [ ] 6. Post-Deployment Audit
     ├── Verify live database table creation in Hostinger phpMyAdmin.
     └── Test feature functionality live on client domain.
-
-```
-
-```
-
 ```
